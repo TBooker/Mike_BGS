@@ -1,0 +1,38 @@
+// requires input of Ne_s and reps
+
+initialize() {
+
+	initializeTreeSeq(simplificationInterval = 500);
+
+//	defineConstant("N",10000);
+//	defineConstant("Nes",10);
+//	defineConstant("rep",1);
+//	defineConstant("r",0.0001);
+
+	// Set mutation rates to 1.25e-7 for neutral sites, and 1.25e-8 for the selected site
+	initializeMutationRate(1.25e-7);
+
+	// m1 mutation type: deleterious
+	initializeMutationType("m1", 0.5, "f", -Nes/N);
+
+	// g1 genomic element type: deleterious
+	initializeGenomicElementType("g1", m1, 1.0);
+
+	// Create single site under purifying selection
+	initializeGenomicElement(g1, 10000, 11000-1);
+
+	// Make genomic element of length 5000 that recombines at r = 0.25
+	// with genomic element of length 5001, where the last site is under selection
+	initializeRecombinationRate(c(0, r, 0), c(4999, 5000, 11000-1));
+}
+
+// Create a population of 10^4 individuals
+1 early() {
+	sim.addSubpop("p1", 10000);
+}
+
+
+// Run for 16Ne generations
+16000 late() {
+	sim.treeSeqOutput('Nes_'+ Nes + '_rep_'+ rep+ '_N_'+ N+ '_r_'+ r+ '.trees');
+}
